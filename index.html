@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Emotion Detection</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f1f1f1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    #container {
+      max-width: 520px;
+      width: 90%;
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 15px;
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+      box-sizing: border-box;
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+      font-size: 32px;
+    }
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      margin-bottom: 15px;
+      padding: 10px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+      box-sizing: border-box;
+      font-size: 18px;
+      resize: vertical;
+      font-family: Calibri, 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    .button-container {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    button {
+      padding: 10px;
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      font-size: 15px;
+    }
+    button#predictButton {
+      flex: 0.69; 
+    }
+    button#resetButton {
+      flex: 0.3; 
+      background-color: #ccc;
+      color: #333; 
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+    p#predictedEmotion {
+      margin-top: 18px;
+      font-weight: bold;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="container">
+    <h1>Emotion Detection</h1>
+    <textarea id="inputText" placeholder="Enter text here..."></textarea>
+    <div class="button-container">
+      <button id="predictButton" onclick="predictEmotion()">Detect</button>
+      <button id="resetButton" onclick="resetPrediction()">Reset</button>
+    </div>
+    <p id="predictedEmotion"></p>
+  </div>
+
+  <script>
+    function predictEmotion() {
+      const text = document.getElementById('inputText').value;
+      console.log('Input text:', text); // Log the input text
+      fetch('http://127.0.0.1:5000/detect', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ text }),
+      })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok');
+          }
+          return response.json();
+      })
+      .then(data => {
+          if (data && data.predicted_emotion) {
+            const predictedEmotion = data.predicted_emotion.charAt(0).toUpperCase() + data.predicted_emotion.slice(1);
+            const confidenceScore = data.confidence_score; // Get confidence score from response
+            const formattedConfidence = (confidenceScore * 100).toFixed(2); // Format confidence score percentage
+            const displayText = `Predicted Emotion: ${predictedEmotion}<br><br>Confidence Score: ${formattedConfidence}%`;
+            document.getElementById('predictedEmotion').innerHTML = displayText;
+          } else {
+              throw new Error('Invalid response format');
+          }
+      })
+      .catch(error => {
+        console.error('Prediction error:', error);
+        document.getElementById('predictedEmotion').innerText = 'Prediction failed. Please try again.';
+        predictedEmotion.style.color = 'red'; // Set the color to red
+        document.getElementById('inputText').value = ''; // Clear the input field
+        setTimeout(() => {
+          document.getElementById('predictedEmotion').innerText = '';
+        }, 10000);
+      });
+    }
+    function resetPrediction() {
+      document.getElementById('predictedEmotion').innerText = '';
+      document.getElementById('inputText').value = '';
+    }
+  </script>
+</body>
+</html>
