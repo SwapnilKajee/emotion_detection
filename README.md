@@ -1,2 +1,5 @@
-# emotion_detection
+# Emotion_Detection
 Emotion Detection from text using Natural Language Processing (NLP) 
+
+Emotion detection from text has arisen as an essential task in natural language processing (NLP), addressing the need to grasp and decipher the complex emotional nuances embedded inside the textual content. This project uses the Bidirectional Long Short-Term Memory (BiLSTM) neural networks, to recognize and classify eight different emotions such joy, sadness, fear, anger, surprise, neutral, disgust, and shame from the text-based information.
+The methodology includes the collection of a different text-based dataset, preprocessing of the text, use of GloVe pre-trained word embeddings, and the development of a BiLSTM neural network with dropout layers to prevent overfitting. The model’s performance is assessed, displaying its capability in precisely classifying emotions from text data, achieving an accuracy of 91.72%. Additionally, an API for emotion prediction and user-friendly web application have been created. 
